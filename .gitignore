@@ -93,3 +93,4 @@ fabric.properties
 /test/debug/
 /test/results/*
 !/test/results/test.txt
+/.claude/

@@ -1,8 +1,4 @@
 import {assert} from "chai";
-import {AggregateMessage} from "@nbeyer/beyer-pms2-customerdb";
-import {Event} from "@nbeyer/pms-event";
-import * as moment from "moment";
-import * as _ from "lodash";
 import {pc} from "../src/process";
 import * as fs from "node:fs";
 import {ServiceInstance} from "@nbeyer/pms-process-creator";
