@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["es2020"],
+    "target": "es2020",
+    "declaration": true,
+    "outDir": "lib/",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "ignoreDeprecations": "6.0",
+    "types": ["mocha", "node"]
+  },
+  "exclude": [
+    "node_modules",
+    "custom_modules",
+    "deploy",
+    "dist",
+    "lib"
+  ]
+}
