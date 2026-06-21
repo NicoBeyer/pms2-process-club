@@ -63,7 +63,12 @@ steps:
         from_secret: AWS_DEFAULT_REGION
       AWS_REGION:
         from_secret: AWS_DEFAULT_REGION
-
+      SHOPIFY_TOKEN:
+        from_secret: SHOPIFY_TOKEN
+      SHOPIFY_SECRET:
+        from_secret: SHOPIFY_SECRET
+      SHOPIFY_KEY:
+        from_secret: SHOPIFY_KEY
   - name: commit
     image: 095565711062.dkr.ecr.eu-west-1.amazonaws.com/beyer.dev.drone:node20-aws
     commands:
@@ -84,12 +89,6 @@ steps:
         from_secret: AWS_SECRET_ACCESS_KEY
       AWS_DEFAULT_REGION:
         from_secret: AWS_DEFAULT_REGION
-      SHOPIFY_TOKEN:
-        from_secret: SHOPIFY_TOKEN
-      SHOPIFY_SECRET:
-        from_secret: SHOPIFY_SECRET
-      SHOPIFY_KEY:
-        from_secret: SHOPIFY_KEY
     settings:
       rebuild: true
       bucket: beyer.dev.cache
@@ -105,6 +104,6 @@ services:
 
 ---
 kind: signature
-hmac: cb7d778a564c0c9a9e742d0fa29a2036ceac8aaa8c0d808b6388fd7fd64d3a0a
+hmac: 0b3327af99835637afbec940de563d78f0aa2ccbb7cf96e3efe2b3eadf3dd534
 
 ...
