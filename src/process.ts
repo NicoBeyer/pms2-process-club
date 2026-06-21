@@ -100,8 +100,11 @@ pc.connectInstance("club", "pms2-shopify", {
                 "Content-Type": "application/json"
             },
             body: {$cond: ["$isValid",
-                '{"status": "success"}',
-                '{"status": "error"}'
+                '{"status":"success"}',
+                {$json: {
+                    status: "error",
+                    result: "$result"
+                }}
             ]}
         }}
     ]
@@ -163,9 +166,12 @@ pc.connectInstance("club", "pms2-shopify", {
                 "Content-Type": "application/json"
             },
             body: {$cond: ["$isValid",
-                    '{"status": "success"}',
-                    '{"status": "error"}'
-                ]}
+                '{"status":"success"}',
+                {$json: {
+                    status: "error",
+                    result: "$result"
+                }}
+            ]}
         }}
     ]
 })

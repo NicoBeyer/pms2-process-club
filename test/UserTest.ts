@@ -19,7 +19,7 @@ describe("Club User Activate/Deactivation", async function () {
         const res = await event.testRun(request);
 
         assert.deepEqual(res.result[0], {
-            "body": "{\"status\": \"success\"}",
+            "body": "{\"status\":\"success\"}",
             "headers": {
                 "Content-Type": "application/json"
             },
@@ -40,7 +40,7 @@ describe("Club User Activate/Deactivation", async function () {
         const res = await event.testRun(request);
 
         assert.deepEqual(res.result[0], {
-            "body": "{\"status\": \"success\"}",
+            "body": "{\"status\":\"success\"}",
             "headers": {
                 "Content-Type": "application/json"
             },
@@ -64,7 +64,7 @@ describe("Club User Activate/Deactivation", async function () {
         const res = await event.testRun(request);
 
         assert.deepEqual(res.result[0], {
-            "body": "{\"status\": \"error\"}",
+            "body": "{\"status\":\"error\"}",
             "headers": {
                 "Content-Type": "application/json"
             },
