@@ -1,6 +1,6 @@
 {
   "resource": "/{instance}/{proxy+}",
-  "path": "/club/user/deactivate",
+  "path": "/club/user-deactivate",
   "httpMethod": "POST",
   "headers": {
     "Accept": "*/*",
@@ -56,7 +56,7 @@
       "bNB87OOdUzTHxR5kfB9UiVSB"
     ]
   },
-  "pathParameters": { "proxy": "user/deactivate", "instance": "club" },
+  "pathParameters": { "proxy": "user-deactivate", "instance": "club" },
   "stageVariables": { "stage": "test" },
   "requestContext": {
     "resourceId": "e7kyxw",

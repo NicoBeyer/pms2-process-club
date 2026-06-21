@@ -44,7 +44,7 @@ pc.connectInstance("club", "pms2-shopify", {
     type: "LambdaQueue",
     transformation: [
         {$match: {
-            "pathParameters.proxy": "user/activate"
+            "pathParameters.proxy": "user-activate"
         }},
         {$addFields: {
                 bodyStr: "$body",
@@ -84,7 +84,7 @@ pc.connectInstance("club", "pms2-shopify", {
         }},
         {$match: {
             "messageSource": {$in: ["club-user-activate", null]},
-            path: {$ne: "/club/user/deactivate"}
+            path: {$ne: "/club/user-deactivate"}
         }},
         {$addFields: {
             body: {$json: "$$message.body"}
@@ -115,7 +115,7 @@ pc.connectInstance("club", "pms2-shopify", {
     type: "LambdaQueue",
     transformation: [
         {$match: {
-            "pathParameters.proxy": "user/deactivate"
+            "pathParameters.proxy": "user-deactivate"
         }},
         {$addFields: {
             bodyStr: "$body",

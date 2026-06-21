@@ -1,6 +1,6 @@
 {
   "resource": "/{instance}/{proxy+}",
-  "path": "/club/user/activate",
+  "path": "/club/user-activate",
   "httpMethod": "POST",
   "headers": {
     "Accept": "*/*",
@@ -56,7 +56,7 @@
       "bNB87OOdUzTHxR5kfB9UiVSB"
     ]
   },
-  "pathParameters": { "proxy": "user/activate", "instance": "club" },
+  "pathParameters": { "proxy": "user-activate", "instance": "club" },
   "stageVariables": { "stage": "test" },
   "requestContext": {
     "resourceId": "e7kyxw",
