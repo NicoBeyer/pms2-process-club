@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 import {ServiceInstance} from "@nbeyer/pms-process-creator";
 import {Noop} from "@nbeyer/pms-noop";
 
-process.env.TRACE = "true";
+process.env.DEBUG = "true";
 
 describe("Club User Activate/Deactivation", async function () {
 

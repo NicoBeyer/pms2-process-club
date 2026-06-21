@@ -84,6 +84,12 @@ steps:
         from_secret: AWS_SECRET_ACCESS_KEY
       AWS_DEFAULT_REGION:
         from_secret: AWS_DEFAULT_REGION
+      SHOPIFY_TOKEN:
+        from_secret: SHOPIFY_TOKEN
+      SHOPIFY_SECRET:
+        from_secret: SHOPIFY_SECRET
+      SHOPIFY_KEY:
+        from_secret: SHOPIFY_KEY
     settings:
       rebuild: true
       bucket: beyer.dev.cache
@@ -99,6 +105,6 @@ services:
 
 ---
 kind: signature
-hmac: 4f78cd214e5a274c5a27a94932954dc8c1206c96d550889420b7d377f7869072
+hmac: cb7d778a564c0c9a9e742d0fa29a2036ceac8aaa8c0d808b6388fd7fd64d3a0a
 
 ...
