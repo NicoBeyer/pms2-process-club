@@ -64,7 +64,7 @@ describe("Club User Activate/Deactivation", async function () {
         const res = await event.testRun(request);
 
         assert.deepEqual(res.result[0], {
-            "body": "{\"status\":\"error\"}",
+            "body": "{\"status\":\"error\",\"isValid\":\"false\"}",
             "headers": {
                 "Content-Type": "application/json"
             },
