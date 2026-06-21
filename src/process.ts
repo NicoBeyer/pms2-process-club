@@ -79,11 +79,11 @@ pc.connectInstance("club", "pms2-shopify", {
     ],
     resultTransformation: [
         {$addFields: {
-            body: "$result.body"
+            body: {$json: "$$message.body"}
         }},
         {$addFields: {
             isValid:  {$and: [
-                {$eq: ["$pathParameters.proxy", "user/activate"]},
+                {$eq: ["$$message.pathParameters.proxy", "user/activate"]},
                 {$eq: ["$body.hash", {$md5: {$concat: ["$body.id", secret]}}]}
             ]}
         }},
