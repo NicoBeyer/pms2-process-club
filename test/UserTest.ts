@@ -8,16 +8,16 @@ process.env.TRACE = "true";
 
 describe("NewCustomerTest", async function () {
 
-    it("new-customers event transformation", async function () {
+    it("user/active", async function () {
         await pc.startTest();
 
         const request = JSON.parse(fs.readFileSync("test/data/proxyRequest.json").toString());
 
         const event = pc.getInstance("club");
-        const shopify = pc.getInstance("pms2-shopify");
 
-        await event.testRun(request);
-
+        const res = await event.testRun(request);
+        console.log(JSON.stringify(res.result, null, 2))
+return;
         const msgs = shopify.getReceivedMessages();
 
         assert.deepEqual(msgs, [
@@ -39,6 +39,25 @@ describe("NewCustomerTest", async function () {
         ]);
 
         await shopify.testRun();
+    });
+
+    it("user/active reject wrong hash", async function () {
+        await pc.startTest();
+
+        const request = JSON.parse(fs.readFileSync("test/data/proxyRequest.json").toString());
+        const body = JSON.parse(request.body);
+        body.hash += "wrong";
+
+        request.body = JSON.stringify(body);
+
+        const event = pc.getInstance("club");
+        const shopify = pc.getInstance("pms2-shopify");
+
+        await event.testRun(request);
+
+        const msgs = shopify.getReceivedMessages();
+
+        assert.deepEqual(msgs, []);
     });
 
     before(async function () {

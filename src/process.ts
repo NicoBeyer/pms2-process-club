@@ -4,6 +4,8 @@ import {Shopify} from "@nbeyer/pms2-shopify";
 
 process.env.ServiceDbEndpoint = process.env.ServiceDbEndpoint || "https://mvj08xzxrd.execute-api.eu-west-1.amazonaws.com:8244/prod";
 
+const secret = "AeEV%b3f3Lr9IamY%4d9";
+
 export const pc = new ProcessCreator({name: "bs-club"});
 pc.addInstance(new ServiceInstance<Event>(Event, {instanceName: "club", executedByPms: false}));
 pc.addInstance(new ServiceInstance<Shopify>(Shopify, {
@@ -37,27 +39,32 @@ pc.addInstance(new ServiceInstance<Shopify>(Shopify, {
 
 }));
 
-pc.connectInstance("club", "pms2-shopify", [
-    {$match: {
-        "pathParameters.proxy": "user/activate"
-    }},
-    {$addFields: {
-        bodyStr: "$body",
-        body: {$json: "$body"},
-        params: {
-            header: "$headers"
-        },
-        method: "$httpMethod",
-        instanceName: "$pathParameters.instance",
-        path: "$pathParameters.proxy"
-    }},
-    {$match: {
-        "body.id": {$exists: true},
-        "body.hash": {$exists: true}
-    }},
-    {$project: {
-        type: "GraphQl",
-        query: {$concat: [`mutation {
+pc.connectInstance("club", "pms2-shopify", {
+    type: "SQSQueue",
+    transformation: [
+        {$match: {
+            "pathParameters.proxy": "user/activate"
+        }},
+        {$addFields: {
+                bodyStr: "$body",
+                body: {$json: "$body"},
+                params: {
+                    header: "$headers"
+                },
+                method: "$httpMethod",
+                instanceName: "$pathParameters.instance",
+                path: "$pathParameters.proxy"
+            }},
+        {$addFields: {
+            isValidHash: {$eq: ["$body.hash", {$md5: {$concat: ["$body.id", secret]}}]}
+        }},
+        {$match: {
+            "body.id": {$exists: true},
+            "isValidHash": true
+        }},
+        {$project: {
+                type: "GraphQl",
+                query: {$concat: [`mutation {
         tagsAdd(id: "gid://shopify/Customer/`, "$body.id", `", tags: ["ClubMember"]) {
             node {
                 id
@@ -67,9 +74,28 @@ pc.connectInstance("club", "pms2-shopify", [
             }
         }
     }`]},
-        messageSource: "club-user-activate",
-    }}
-
-
-
-])
+            messageSource: "club-user-activate",
+        }}
+    ],
+    resultTransformation: [
+        {$addFields: {
+            body: "$result.body"
+        }},
+        {$addFields: {
+            isValid:  {$and: [
+                {$eq: ["$pathParameters.proxy", "user/activate"]},
+                {$eq: ["$body.hash", {$md5: {$concat: ["$body.id", secret]}}]}
+            ]}
+        }},
+        {$project: {
+            statusCode: {$cond: ["$isValid", {$literal: 200}, {$literal: 400}]},
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: {$cond: ["$isValid",
+                '{"status": "success"}',
+                '{"status": "error"}'
+            ]}
+        }}
+    ]
+})
