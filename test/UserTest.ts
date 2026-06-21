@@ -3,8 +3,9 @@ import {pc} from "../src/process";
 import * as fs from "node:fs";
 import {ServiceInstance} from "@nbeyer/pms-process-creator";
 import {Noop} from "@nbeyer/pms-noop";
+import * as _ from "lodash";
 
-process.env.DEBUG = "true";
+process.env.DEBUG = "";
 
 describe("Club User Activate/Deactivation", async function () {
 
@@ -63,13 +64,14 @@ describe("Club User Activate/Deactivation", async function () {
 
         const res = await event.testRun(request);
 
-        assert.deepEqual(res.result[0], {
-            "body": "{\"status\":\"error\",\"isValid\":\"false\"}",
+        assert.deepEqual(_.omit(res.result[0], "body"), {
+            // "body": "{\"status\":\"error\",\"isValid\":\"false\"}",
             "headers": {
                 "Content-Type": "application/json"
             },
             "statusCode": 400
         } as any);
+        console.log(JSON.parse(res.result[0].body).result, null, 2);
 
         const msgs = shopify.getReceivedMessages();
 

@@ -103,7 +103,7 @@ pc.connectInstance("club", "pms2-shopify", {
                 '{"status":"success"}',
                 {$json: {
                     status: "error",
-                    result: "$result",
+                    result: "$",
                     isValid:{$cond: ["$isValid", "true", "false"]}
                 }}
             ]}
