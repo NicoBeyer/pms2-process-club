@@ -14,10 +14,11 @@ describe("NewCustomerTest", async function () {
         const request = JSON.parse(fs.readFileSync("test/data/proxyRequest.json").toString());
 
         const event = pc.getInstance("club");
+        const shopify = pc.getInstance("pms2-shopify");
 
         const res = await event.testRun(request);
         console.log(JSON.stringify(res.result, null, 2))
-return;
+
         const msgs = shopify.getReceivedMessages();
 
         assert.deepEqual(msgs, [
