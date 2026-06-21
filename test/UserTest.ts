@@ -6,7 +6,7 @@ import {Noop} from "@nbeyer/pms-noop";
 
 process.env.TRACE = "true";
 
-describe("NewCustomerTest", async function () {
+describe("Club User Activate/Deactivation", async function () {
 
     it("user/active", async function () {
         await pc.startTest();
@@ -26,25 +26,26 @@ describe("NewCustomerTest", async function () {
             "statusCode": 200
         } as any);
 
-        const msgs = shopify.getReceivedMessages();
+        await shopify.testRun();
+    });
 
-        assert.deepEqual(msgs, [
-            {
-                type: 'GraphQl',
-                query: 'mutation {\n' +
-                    '        tagsAdd(id: "gid://shopify/Customer/2565335236", tags: ["ClubMember"]) {\n' +
-                    '            node {\n' +
-                    '                id\n' +
-                    '            }\n' +
-                    '            userErrors {\n' +
-                    '                message\n' +
-                    '            }\n' +
-                    '        }\n' +
-                    '    }',
-                messageSource: 'club-user-activate',
-                _pmsProcessNamespace: 'bs-club'
-            }
-        ]);
+    it("user/deactive", async function () {
+        await pc.startTest();
+
+        const request = JSON.parse(fs.readFileSync("test/data/proxyRequestDeactivate.json").toString());
+
+        const event = pc.getInstance("club");
+        const shopify = pc.getInstance("pms2-shopify");
+
+        const res = await event.testRun(request);
+
+        assert.deepEqual(res.result[0], {
+            "body": "{\"status\": \"success\"}",
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "statusCode": 200
+        } as any);
 
         await shopify.testRun();
     });

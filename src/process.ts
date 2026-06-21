@@ -1,6 +1,7 @@
 import {ProcessCreator, ServiceInstance} from "@nbeyer/pms-process-creator";
 import {Event} from "@nbeyer/pms-event";
 import {Shopify} from "@nbeyer/pms2-shopify";
+import {LambdaQueueConfig} from "@nbeyer/beyer-pms2-customerdb";
 
 process.env.ServiceDbEndpoint = process.env.ServiceDbEndpoint || "https://mvj08xzxrd.execute-api.eu-west-1.amazonaws.com:8244/prod";
 
@@ -40,7 +41,7 @@ pc.addInstance(new ServiceInstance<Shopify>(Shopify, {
 }));
 
 pc.connectInstance("club", "pms2-shopify", {
-    type: "SQSQueue",
+    type: "LambdaQueue",
     transformation: [
         {$match: {
             "pathParameters.proxy": "user/activate"
@@ -79,12 +80,18 @@ pc.connectInstance("club", "pms2-shopify", {
     ],
     resultTransformation: [
         {$addFields: {
+            path: "$$message.path"
+        }},
+        {$match: {
+            "messageSource": {$in: ["club-user-activate", null]},
+            path: {$ne: "/club/user/deactivate"}
+        }},
+        {$addFields: {
             body: {$json: "$$message.body"}
         }},
         {$addFields: {
             isValid:  {$and: [
-                {$eq: ["$$message.pathParameters.proxy", "user/activate"]},
-                {$eq: ["$body.hash", {$md5: {$concat: ["$body.id", secret]}}]}
+                {$eq: ["$result.data.tagsAdd.node.id", {$concat: ["gid://shopify/Customer/", "$body.id"]}]}
             ]}
         }},
         {$project: {
@@ -96,6 +103,69 @@ pc.connectInstance("club", "pms2-shopify", {
                 '{"status": "success"}',
                 '{"status": "error"}'
             ]}
+        }}
+    ]
+})
+
+pc.connectInstance("club", "pms2-shopify", {
+    type: "LambdaQueue",
+    transformation: [
+        {$match: {
+            "pathParameters.proxy": "user/deactivate"
+        }},
+        {$addFields: {
+            bodyStr: "$body",
+            body: {$json: "$body"},
+            params: {
+                header: "$headers"
+            },
+            method: "$httpMethod",
+            instanceName: "$pathParameters.instance",
+            path: "$pathParameters.proxy"
+        }},
+        {$addFields: {
+            isValidHash: {$eq: ["$body.hash", {$md5: {$concat: ["$body.id", secret]}}]}
+        }},
+        {$match: {
+            "body.id": {$exists: true},
+            "isValidHash": true
+        }},
+        {$project: {
+                type: "GraphQl",
+                query: {$concat: [`mutation {
+        tagsRemove(id: "gid://shopify/Customer/`, "$body.id", `", tags: ["ClubMember"]) {
+            node {
+                id
+            }
+            userErrors {
+                message
+            }
+        }
+    }`]},
+        messageSource: "club-user-deactivate",
+    }}
+    ],
+    resultTransformation: [
+        {$match: {
+            "messageSource": "club-user-deactivate"
+        }},
+        {$addFields: {
+            body: {$json: "$$message.body"}
+        }},
+        {$addFields: {
+            isValid:  {$and: [
+                {$eq: ["$result.data.tagsRemove.node.id", {$concat: ["gid://shopify/Customer/", "$body.id"]}]}
+            ]}
+        }},
+        {$project: {
+            statusCode: {$cond: ["$isValid", {$literal: 200}, {$literal: 400}]},
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: {$cond: ["$isValid",
+                    '{"status": "success"}',
+                    '{"status": "error"}'
+                ]}
         }}
     ]
 })
