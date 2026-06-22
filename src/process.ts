@@ -47,14 +47,7 @@ pc.connectInstance("club", "pms2-shopify", {
             "pathParameters.proxy": "user-activate"
         }},
         {$addFields: {
-                bodyStr: "$body",
                 body: {$json: "$body"},
-                params: {
-                    header: "$headers"
-                },
-                method: "$httpMethod",
-                instanceName: "$pathParameters.instance",
-                path: "$pathParameters.proxy"
             }},
         {$addFields: {
             isValidHash: {$eq: ["$body.hash", {$md5: {$concat: ["$body.id", secret]}}]}
@@ -80,11 +73,11 @@ pc.connectInstance("club", "pms2-shopify", {
     ],
     resultTransformation: [
         {$addFields: {
-            path: "$$message.path"
+            proxy: "$$message.pathParameters.proxy"
         }},
         {$match: {
             "messageSource": {$in: ["club-user-activate", null]},
-            path: {$ne: "/club/user-deactivate"}
+            proxy: {$ne: "user-deactivate"}
         }},
         {$addFields: {
             body: {$json: "$$message.body"}
@@ -117,14 +110,7 @@ pc.connectInstance("club", "pms2-shopify", {
             "pathParameters.proxy": "user-deactivate"
         }},
         {$addFields: {
-            bodyStr: "$body",
             body: {$json: "$body"},
-            params: {
-                header: "$headers"
-            },
-            method: "$httpMethod",
-            instanceName: "$pathParameters.instance",
-            path: "$pathParameters.proxy"
         }},
         {$addFields: {
             isValidHash: {$eq: ["$body.hash", {$md5: {$concat: ["$body.id", secret]}}]}
